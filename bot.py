@@ -67,6 +67,10 @@ mensagens_apocalipticas = [
     "Com os olhos da noite sobre você, {user}, a fortuna finalmente lhe sorriu!"
 ]
 
+# Função para calcular o tempo restante para o próximo sorteio
+def tempo_restante(last_time):
+    return max(0, 10800 - (time.time() - last_time))  # 3 horas = 10800 segundos
+
 # Comando de ajuda com imagem
 @bot.command()
 async def ajuda(ctx):
