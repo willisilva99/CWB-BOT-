@@ -27,7 +27,32 @@ player_embers = {}
 # Emojis de reação para adicionar
 reacoes = ["🔥", "<:emoji_1:1262824010723365030>", "<:emoji_2:1261377496893489242>", "<:emoji_3:1261374830088032378>", "<:emoji_4:1260945241918279751>"]
 
-# Mensagens apocalípticas
+# Lista de prêmios com chance de VIP ajustada para 0.001%
+prizes = [
+    {"name": "AK47", "image": "https://discordapp.com/channels/1222717244170174585/1309220640556978196/1309221997603196989", "chance": 2},  # Chance baixa
+    {"name": "VIP", "image": "https://discordapp.com/channels/1222717244170174585/1309220640556978196/1309224289367228446/vip.png", "chance": 0.001},  # Chance 0.001%
+    {"name": "GIROCÓPTERO", "image": "https://discordapp.com/channels/1222717244170174585/1309220640556978196/1309222056348618912", "chance": 2},  # Chance baixa
+    {"name": "MOTO", "image": "https://discordapp.com/channels/1222717244170174585/1309220640556978196/1309222023444037714", "chance": 2},  # Chance baixa
+    {"name": "SEM SORTE", "image": "https://discordapp.com/channels/1222717244170174585/1309220640556978196/1309221462866923520", "chance": 95},  # Chance alta para falha
+]
+
+# Mensagens de falha (Sem sorte)
+mensagens_sem_sorte = [
+    "O apocalipse não perdoa... o destino não sorriu para você hoje. Tente novamente, sobrevivente!",
+    "A escuridão tomou conta da sua sorte. Mas não desista, o amanhã pode ser mais favorável.",
+    "Os ventos sombrios do CWB sopram contra você, mas continue tentando. A sorte pode mudar!",
+    "A devastação não te favoreceu... mas continue lutando, a esperança é a última que morre.",
+]
+
+# Mensagens de sorte (quando o jogador ganha prêmios)
+mensagens_com_sorte = [
+    "O apocalipse não conseguiu te derrotar. A sorte está do seu lado, sobrevivente! Você ganhou: **{prize}**.",
+    "Você desafiou os mortos e a sorte te recompensou. Prepare-se para sua próxima jornada!",
+    "O CWB é implacável, mas hoje você venceu. Aproveite seu prêmio, herói do apocalipse!",
+    "Em meio à destruição, você brilhou como um farol de esperança. O apocalipse não pode te parar!",
+]
+
+# Mensagens apocalípticas (para prêmios valiosos)
 mensagens_apocalipticas = [
     "As nuvens negras se abrem, e o poder está ao seu alcance, {user}!",
     "Os espíritos do apocalipse sussurram seu nome... você foi escolhido, {user}!",
@@ -70,7 +95,7 @@ async def abrir_caixa(ctx):
     if prize["name"] == "SEM SORTE":
         mensagem = random.choice(mensagens_sem_sorte)
     else:
-        mensagem = random.choice(mensagens_com_sorte)
+        mensagem = random.choice(mensagens_com_sorte).format(prize=prize["name"])
         player_prizes[user.id] = player_prizes.get(user.id, []) + [prize["name"]]  # Armazena o prêmio
 
         # Envia uma mensagem apocalíptica mencionando o apelido do jogador para prêmios valiosos
@@ -95,25 +120,11 @@ async def abrir_caixa(ctx):
     if prize["name"] != "SEM SORTE":
         await msg.add_reaction(random.choice(reacoes))
 
+    # Limpeza do chat (opcional)
+    await ctx.channel.purge(limit=10)  # Apaga as últimas 10 mensagens, incluindo o comando
+
     # Atualiza o tempo da última tentativa do jogador
     last_attempt_time[user.id] = time.time()
-
-# Comando para abrir o admin (restrito ao criador)
-@bot.command()
-async def abrir_admin(ctx):
-    if ctx.author.id == 470628393272999948:
-        # Apenas o criador pode mencionar o nome e reagir com emojis
-        await ctx.send(f"{ctx.author.mention} você pode reagir com emojis e mencionar meu nome, pois é o criador do bot.")
-        await ctx.message.add_reaction("🔥")
-    else:
-        # Caso outra pessoa tente usar o comando
-        await ctx.send(f"{ctx.author.mention}, somente o criador pode usar esse comando! Um grande líder do apocalipse não deve ser desafiado!")
-        embed = discord.Embed(
-            title="⚡Mensagem Apocalíptica⚡",
-            description="A terra treme sob o peso do seu erro. Apenas um ser superior pode invocar o poder do apocalipse.",
-            color=discord.Color.red()
-        )
-        await ctx.send(embed=embed)
 
 # Função para selecionar um prêmio com base nas chances ajustadas
 def escolher_premio():
