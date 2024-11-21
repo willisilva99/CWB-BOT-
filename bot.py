@@ -17,6 +17,7 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 # IDs dos canais
 canal_abrir_caixa = 1309181452595757077  # Canal de comando para abrir caixas
 canal_rank = 1309181411751886869  # Canal de Rank Automático
+canal_admin = 1309181411751886869  # Canal onde apenas administradores podem digitar mensagens
 
 # Dicionário para armazenar o último tempo de sorteio de cada jogador e pontuação de embers
 last_attempt_time = {}
@@ -66,7 +67,7 @@ mensagens_apocalipticas = [
     "Com os olhos da noite sobre você, {user}, a fortuna finalmente lhe sorriu!"
 ]
 
-# Comando de ajuda
+# Comando de ajuda com imagem
 @bot.command()
 async def ajuda(ctx):
     ajuda_texto = """
@@ -79,7 +80,16 @@ async def ajuda(ctx):
     
     **Nota:** O comando `!abrir_caixa` só pode ser usado no canal correto. Consulte o administrador para mais informações.
     """
-    await ctx.send(ajuda_texto)
+    
+    embed = discord.Embed(
+        title="Comandos Disponíveis",
+        description=ajuda_texto,
+        color=discord.Color.blue()
+    )
+    # Definir a imagem do canal de ajuda fornecido
+    embed.set_image(url="https://i.postimg.cc/rmt7CVjF/DALL-E-2024-11-21-15-22-03-A-rugged-survivor-in-a-post-apocalyptic-setting-wearing-worn-out-cloth.webp")
+    
+    await ctx.send(embed=embed)
 
 # Comando para abrir a caixa com cooldown
 @bot.command()
