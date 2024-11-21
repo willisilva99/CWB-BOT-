@@ -77,6 +77,8 @@ async def ajuda(ctx):
     `!abrir_admin` - Apenas o criador pode usar este comando, sem cooldown.
     `!limpar_chat` - Limpa o chat, só pode ser usado por administradores. (Comando de emergência)
     `!ajuda` - Exibe esta mensagem de ajuda.
+    `!rank_premios` - Exibe o ranking dos melhores prêmios.
+    `!rank_caixas_abertas` - Exibe o ranking dos jogadores que mais abriram caixas.
     
     **Nota:** O comando `!abrir_caixa` só pode ser usado no canal correto. Consulte o administrador para mais informações.
     """
@@ -156,39 +158,14 @@ async def abrir_caixa(ctx):
     # Atualiza o tempo da última tentativa do jogador
     last_attempt_time[user.id] = time.time()
 
-# Comando para abrir a caixa sem cooldown (somente para o criador)
+# Comando para exibir o ranking dos prêmios (top 10)
 @bot.command()
-async def abrir_admin(ctx):
-    if ctx.author.id == 470628393272999948:  # Verifica se é o criador
-        await ctx.send(f"{ctx.author.mention}, você usou o comando de forma segura, sem cooldown.")
-        # Sorteia um prêmio para o criador com as mesmas funções do `!abrir_caixa`
-        prize = escolher_premio()
-        mensagem = random.choice(mensagens_com_sorte).format(prize=prize["name"])
-        embed = discord.Embed(
-            title="🎁 Você abriu a Caixa de Presentes!",
-            description=f"{ctx.author.mention}, {mensagem} Você ganhou: **{prize['name']}**!",
-            color=discord.Color.gold()
-        )
-        embed.set_image(url=prize['image'])
-        await ctx.send(embed=embed)
-    else:
-        # Caso outro usuário tente usar o comando
-        await ctx.send(f"{ctx.author.mention}, apenas meu criador pode usar este comando! O apocalipse não perdoa sua ousadia.")
-        embed = discord.Embed(
-            title="⚡Mensagem Apocalíptica⚡",
-            description="Você ousou desafiar o criador! Apenas {creator} pode usar este poder.",
-            color=discord.Color.red()
-        )
-        await ctx.send(embed=embed)
-
-# Função para calcular o tempo restante para o próximo sorteio
-def tempo_restante(last_time):
-    return max(0, 10800 - (time.time() - last_time))  # 3 horas = 10800 segundos
-
-# Ranking de Prêmios - Top 10
-@tasks.loop(hours=6)
-async def rank_premios():
-    channel = bot.get_channel(canal_rank)
+async def rank_premios(ctx):
+    # Verifica se o comando foi executado no canal correto
+    if ctx.channel.id != canal_rank:
+        await ctx.send(f"{ctx.author.mention}, você só pode usar este comando no canal de rank: <#{canal_rank}>")
+        return
+    
     rank = sorted(player_prizes.items(), key=lambda x: sum(1 for prize in x[1] if prize != "SEM SORTE"), reverse=True)
     mensagem = "🏆 **Ranking dos Melhores Prêmios** 🏆\n\n"
     
@@ -197,12 +174,16 @@ async def rank_premios():
         itens_raros = [p for p in prizes if p != "SEM SORTE"]
         mensagem += f"{i}. **{user.display_name}** - {len(itens_raros)} prêmios raros: {', '.join(itens_raros)}\n"
     
-    await channel.send(mensagem)
+    await ctx.send(mensagem)
 
-# Ranking de Caixas Abertas - Top 5
-@tasks.loop(hours=6, minutes=1)
-async def rank_aberturas_caixa():
-    channel = bot.get_channel(canal_rank)
+# Comando para exibir o ranking das caixas abertas (top 5)
+@bot.command()
+async def rank_caixas_abertas(ctx):
+    # Verifica se o comando foi executado no canal correto
+    if ctx.channel.id != canal_rank:
+        await ctx.send(f"{ctx.author.mention}, você só pode usar este comando no canal de rank: <#{canal_rank}>")
+        return
+    
     rank = sorted(player_box_opens.items(), key=lambda x: x[1], reverse=True)
     mensagem = "📦 **Ranking de Abertura de Caixas** 📦\n\n"
     
@@ -210,7 +191,7 @@ async def rank_aberturas_caixa():
         user = await bot.fetch_user(user_id)
         mensagem += f"{i}. **{user.display_name}** - {opens} caixas abertas\n"
     
-    await channel.send(mensagem)
+    await ctx.send(mensagem)
 
 # Limpeza automática diária do chat (à meia-noite)
 @tasks.loop(minutes=1)
@@ -225,6 +206,10 @@ async def limpar_chat_automatica():
             color=discord.Color.red()
         )
         await channel.send(embed=embed)
+
+        # Resetando os rankings (prêmios e caixas abertas)
+        player_prizes.clear()
+        player_box_opens.clear()
 
 # Mudança de status do bot a cada 5 minutos
 @tasks.loop(minutes=5)
