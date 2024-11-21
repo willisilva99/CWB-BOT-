@@ -7,16 +7,16 @@ from datetime import datetime
 
 # Definindo intents necessários
 intents = discord.Intents.default()
-intents.messages = True
-intents.guilds = True
-intents.message_content = True
+intents.messages = True  # Necessário para ler e reagir a mensagens
+intents.guilds = True    # Necessário para interagir com guildas/servidores
+intents.message_content = True  # Necessário para acessar o conteúdo das mensagens
 
 # Criando o bot com os intents necessários
 bot = commands.Bot(command_prefix="!", intents=intents)
 
 # IDs dos canais
-canal_rank = 1309181411751886869
-canal_admin = 1309181452595757077
+canal_rank = 1309181411751886869  # Canal de Rank
+canal_admin = 1309181452595757077  # Canal de Administração
 
 # Dicionário para armazenar o último tempo de sorteio de cada jogador e pontuação de embers
 last_attempt_time = {}
