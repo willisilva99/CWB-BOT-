@@ -15,8 +15,8 @@ intents.message_content = True  # Necessário para acessar o conteúdo das mensa
 bot = commands.Bot(command_prefix="!", intents=intents)
 
 # IDs dos canais
-canal_rank = 1309181411751886869  # Canal de Rank
-canal_admin = 1309181452595757077  # Canal de Administração
+canal_abrir_caixa = 1309181452595757077  # Canal de comando para abrir caixas
+canal_rank = 1309181411751886869  # Canal de Rank Automático
 
 # Dicionário para armazenar o último tempo de sorteio de cada jogador e pontuação de embers
 last_attempt_time = {}
@@ -69,11 +69,8 @@ mensagens_apocalipticas = [
 # Comando para abrir a caixa com restrição de canal
 @bot.command()
 async def abrir_caixa(ctx):
-    if ctx.channel.id == canal_admin and ctx.author.guild_permissions.administrator:
-        # Admin pode abrir sem cooldown
-        pass
-    elif ctx.channel.id != canal_rank:
-        await ctx.send(f"{ctx.author.mention}, você só pode usar o comando neste canal: <#{canal_rank}>")
+    if ctx.channel.id != canal_abrir_caixa:  # Verifica se o comando foi executado no canal permitido
+        await ctx.send(f"{ctx.author.mention}, você só pode usar o comando neste canal: <#{canal_abrir_caixa}>")
         return
 
     user = ctx.message.author
@@ -125,31 +122,6 @@ async def abrir_caixa(ctx):
 
     # Atualiza o tempo da última tentativa do jogador
     last_attempt_time[user.id] = time.time()
-
-# Comando de emergência para limpar o chat (somente para administradores)
-@bot.command()
-async def limpar_chat(ctx):
-    # IDs dos administradores que podem usar o comando manualmente
-    allowed_admins = [470628393272999948, 434531832097144852]
-    
-    if ctx.author.id in allowed_admins:
-        # Limpeza do chat e mensagem apocalíptica
-        await ctx.channel.purge(limit=100)  # Limpa até 100 mensagens do canal
-        embed = discord.Embed(
-            title="⚡Limpeza de Chat⚡",
-            description="O apocalipse chegou e o chat foi limpo. Preparando o próximo ciclo de destruição...",
-            color=discord.Color.red()
-        )
-        await ctx.send(embed=embed)
-    else:
-        # Caso outra pessoa tente usar o comando
-        await ctx.send(f"{ctx.author.mention}, você não tem permissão para usar esse comando! Apenas administradores podem limpar o chat.")
-        embed = discord.Embed(
-            title="⚡Mensagem Apocalíptica⚡",
-            description="Você ousou tentar! A terra treme ao seu erro. Apenas os escolhidos podem invocar o poder do apocalipse.",
-            color=discord.Color.red()
-        )
-        await ctx.send(embed=embed)
 
 # Função para selecionar um prêmio com base nas chances ajustadas
 def escolher_premio():
