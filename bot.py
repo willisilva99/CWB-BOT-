@@ -3,7 +3,7 @@ from discord.ext import commands, tasks
 import random
 import time
 import os
-from datetime import datetime, timedelta
+from datetime import datetime
 
 # Definindo intents necessários
 intents = discord.Intents.default()
@@ -133,10 +133,23 @@ async def limpar_chat(ctx):
     allowed_admins = [470628393272999948, 434531832097144852]
     
     if ctx.author.id in allowed_admins:
+        # Limpeza do chat e mensagem apocalíptica
         await ctx.channel.purge(limit=100)  # Limpa até 100 mensagens do canal
-        await ctx.send(f"{ctx.author.mention} o chat foi limpo com sucesso!")
+        embed = discord.Embed(
+            title="⚡Limpeza de Chat⚡",
+            description="O apocalipse chegou e o chat foi limpo. Preparando o próximo ciclo de destruição...",
+            color=discord.Color.red()
+        )
+        await ctx.send(embed=embed)
     else:
+        # Caso outra pessoa tente usar o comando
         await ctx.send(f"{ctx.author.mention}, você não tem permissão para usar esse comando! Apenas administradores podem limpar o chat.")
+        embed = discord.Embed(
+            title="⚡Mensagem Apocalíptica⚡",
+            description="Você ousou tentar! A terra treme ao seu erro. Apenas os escolhidos podem invocar o poder do apocalipse.",
+            color=discord.Color.red()
+        )
+        await ctx.send(embed=embed)
 
 # Função para selecionar um prêmio com base nas chances ajustadas
 def escolher_premio():
@@ -151,6 +164,20 @@ def escolher_premio():
 # Função para calcular o tempo restante para o próximo sorteio
 def tempo_restante(last_time):
     return max(0, 10800 - (time.time() - last_time))  # 3 horas = 10800 segundos
+
+# Limpeza automática diária do chat (à meia-noite)
+@tasks.loop(minutes=1)
+async def limpar_chat_automatica():
+    now = datetime.now()
+    if now.hour == 0 and now.minute == 0:  # Exatamente à meia-noite
+        channel = bot.get_channel(canal_rank)
+        await channel.purge(limit=100)  # Limpa até 100 mensagens do canal
+        embed = discord.Embed(
+            title="⚡Limpeza Automática do Chat⚡",
+            description="O apocalipse renovou o chat para um novo ciclo de destruição.",
+            color=discord.Color.red()
+        )
+        await channel.send(embed=embed)
 
 # Rodando o bot com o token de ambiente
 TOKEN = os.getenv('TOKEN')
