@@ -101,89 +101,30 @@ def escolher_premio():
         if rand <= current:
             return item
 
-# Comando para abrir a caixa com cooldown
+# Comando para limpar o chat
 @bot.command()
-async def abrir_caixa(ctx):
-    # Verifica se o comando foi executado no canal correto
-    if ctx.channel.id != canal_abrir_caixa:  
-        await ctx.send(f"{ctx.author.mention}, você só pode usar o comando neste canal: <#{canal_abrir_caixa}>")
-        return
-
-    user = ctx.message.author
-
-    # Verifica se o jogador já tentou nos últimos 3 horas
-    if user.id in last_attempt_time:
-        tempo_rest = tempo_restante(last_attempt_time[user.id])
-        if tempo_rest > 0:
-            horas = int(tempo_rest // 3600)
-            minutos = int((tempo_rest % 3600) // 60)
-            segundos = int(tempo_rest % 60)
-            await ctx.send(f"{user.mention}, você precisa esperar {horas}h {minutos}m {segundos}s para tentar novamente.")
-            return
-
-    # Sorteia um prêmio com base nas chances ajustadas
-    prize = escolher_premio()
-
-    # Mensagem diferente dependendo se ganhou ou não
-    if prize["name"] == "SEM SORTE":
-        mensagem = random.choice(mensagens_sem_sorte)
-    else:
-        mensagem = random.choice(mensagens_com_sorte).format(prize=prize["name"])
-        player_prizes[user.id] = player_prizes.get(user.id, []) + [prize["name"]]  # Armazena o prêmio
-
-        # Envia uma mensagem apocalíptica mencionando o apelido do jogador para prêmios valiosos
-        mensagem_apocaliptica = random.choice(mensagens_apocalipticas).format(user=user.display_name)
-        await ctx.send(mensagem_apocaliptica)
-
-    # Incrementa o contador de caixas abertas
-    player_box_opens[user.id] = player_box_opens.get(user.id, 0) + 1
-
-    # Cria o embed com a imagem do prêmio ou da mensagem de azar
-    embed = discord.Embed(
-        title="🎁 Você abriu a Caixa de Presentes!",
-        description=f"{user.mention}, {mensagem} Você ganhou: **{prize['name']}**!" if prize["name"] != "SEM SORTE" else f"{user.mention}, {mensagem}",
-        color=discord.Color.gold()
-    )
-    embed.set_image(url=prize['image'])  # A imagem agora usa um link direto válido
-
-    # Envia a mensagem com o embed no canal
-    msg = await ctx.send(embed=embed)
-
-    # Reage no post do prêmio valioso apenas
-    if prize["name"] != "SEM SORTE":
-        await msg.add_reaction(random.choice(reacoes))
-
-    # Atualiza o tempo da última tentativa do jogador
-    last_attempt_time[user.id] = time.time()
-
-# Comando para abrir a caixa sem cooldown (somente para o criador)
-@bot.command()
-async def abrir_admin(ctx):
-    if ctx.author.id == 470628393272999948:  # Verifica se é o criador
-        await ctx.send(f"{ctx.author.mention}, você usou o comando de forma segura, sem cooldown.")
-        # Sorteia um prêmio para o criador com as mesmas funções do `!abrir_caixa`
-        prize = escolher_premio()
-        mensagem = random.choice(mensagens_com_sorte).format(prize=prize["name"])
+async def limpar_chat(ctx):
+    # Verifica se o usuário tem permissão para usar o comando
+    allowed_admins = [470628393272999948, 434531832097144852]
+    
+    if ctx.author.id in allowed_admins:
+        # Limpeza do chat e mensagem apocalíptica
+        await ctx.channel.purge(limit=100)  # Limpa até 100 mensagens do canal
         embed = discord.Embed(
-            title="🎁 Você abriu a Caixa de Presentes!",
-            description=f"{ctx.author.mention}, {mensagem} Você ganhou: **{prize['name']}**!",
-            color=discord.Color.gold()
-        )
-        embed.set_image(url=prize['image'])
-        await ctx.send(embed=embed)
-    else:
-        # Caso outro usuário tente usar o comando
-        await ctx.send(f"{ctx.author.mention}, apenas meu criador pode usar este comando! O apocalipse não perdoa sua ousadia.")
-        embed = discord.Embed(
-            title="⚡Mensagem Apocalíptica⚡",
-            description="Você ousou desafiar o criador! Apenas {creator} pode usar este poder.",
+            title="⚡Limpeza de Chat⚡",
+            description="O apocalipse chegou e o chat foi limpo. Preparando o próximo ciclo de destruição...",
             color=discord.Color.red()
         )
         await ctx.send(embed=embed)
-
-# Função para calcular o tempo restante para o próximo sorteio
-def tempo_restante(last_time):
-    return max(0, 10800 - (time.time() - last_time))  # 3 horas = 10800 segundos
+    else:
+        # Caso outro usuário tente usar o comando
+        await ctx.send(f"{ctx.author.mention}, você não tem permissão para usar esse comando! Apenas administradores podem limpar o chat.")
+        embed = discord.Embed(
+            title="⚡Mensagem Apocalíptica⚡",
+            description="Você ousou tentar! A terra treme ao seu erro. Apenas os escolhidos podem invocar o poder do apocalipse.",
+            color=discord.Color.red()
+        )
+        await ctx.send(embed=embed)
 
 # Ranking de Prêmios - Top 10
 @tasks.loop(hours=6)
