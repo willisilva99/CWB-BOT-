@@ -66,6 +66,20 @@ mensagens_apocalipticas = [
     "Com os olhos da noite sobre você, {user}, a fortuna finalmente lhe sorriu!"
 ]
 
+# Comando de ajuda
+@bot.command()
+async def ajuda(ctx):
+    ajuda_texto = """
+    **Comandos disponíveis:**
+
+    `!abrir_caixa` - Abra uma caixa para ganhar prêmios. Apenas pode ser usado no canal correto.
+    `!limpar_chat` - Limpa o chat, só pode ser usado por administradores. (Comando de emergência)
+    `!ajuda` - Exibe esta mensagem de ajuda.
+    
+    **Nota:** O comando `!abrir_caixa` só pode ser usado no canal correto. Consulte o administrador para mais informações.
+    """
+    await ctx.send(ajuda_texto)
+
 # Comando para abrir a caixa com restrição de canal
 @bot.command()
 async def abrir_caixa(ctx):
@@ -117,9 +131,6 @@ async def abrir_caixa(ctx):
     if prize["name"] != "SEM SORTE":
         await msg.add_reaction(random.choice(reacoes))
 
-    # Limpeza automática do chat após o comando
-    await ctx.channel.purge(limit=10)  # Limpa as últimas 10 mensagens
-
     # Atualiza o tempo da última tentativa do jogador
     last_attempt_time[user.id] = time.time()
 
@@ -150,6 +161,31 @@ async def limpar_chat_automatica():
             color=discord.Color.red()
         )
         await channel.send(embed=embed)
+
+# Comando de emergência para limpar o chat (somente para administradores)
+@bot.command()
+async def limpar_chat(ctx):
+    # IDs dos administradores que podem usar o comando manualmente
+    allowed_admins = [470628393272999948, 434531832097144852]
+    
+    if ctx.author.id in allowed_admins:
+        # Limpeza do chat e mensagem apocalíptica
+        await ctx.channel.purge(limit=100)  # Limpa até 100 mensagens do canal
+        embed = discord.Embed(
+            title="⚡Limpeza de Chat⚡",
+            description="O apocalipse chegou e o chat foi limpo. Preparando o próximo ciclo de destruição...",
+            color=discord.Color.red()
+        )
+        await ctx.send(embed=embed)
+    else:
+        # Caso outra pessoa tente usar o comando
+        await ctx.send(f"{ctx.author.mention}, você não tem permissão para usar esse comando! Apenas administradores podem limpar o chat.")
+        embed = discord.Embed(
+            title="⚡Mensagem Apocalíptica⚡",
+            description="Você ousou tentar! A terra treme ao seu erro. Apenas os escolhidos podem invocar o poder do apocalipse.",
+            color=discord.Color.red()
+        )
+        await ctx.send(embed=embed)
 
 # Rodando o bot com o token de ambiente
 TOKEN = os.getenv('TOKEN')
