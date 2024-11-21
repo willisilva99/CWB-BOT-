@@ -73,6 +73,7 @@ async def ajuda(ctx):
     **Comandos disponíveis:**
 
     `!abrir_caixa` - Abra uma caixa para ganhar prêmios. Apenas pode ser usado no canal correto.
+    `!abrir_admin` - Apenas o criador pode usar este comando, sem cooldown.
     `!limpar_chat` - Limpa o chat, só pode ser usado por administradores. (Comando de emergência)
     `!ajuda` - Exibe esta mensagem de ajuda.
     
@@ -80,10 +81,11 @@ async def ajuda(ctx):
     """
     await ctx.send(ajuda_texto)
 
-# Comando para abrir a caixa com restrição de canal
+# Comando para abrir a caixa com cooldown
 @bot.command()
 async def abrir_caixa(ctx):
-    if ctx.channel.id != canal_abrir_caixa:  # Verifica se o comando foi executado no canal permitido
+    # Verifica se o comando foi executado no canal correto
+    if ctx.channel.id != canal_abrir_caixa:  
         await ctx.send(f"{ctx.author.mention}, você só pode usar o comando neste canal: <#{canal_abrir_caixa}>")
         return
 
@@ -133,6 +135,31 @@ async def abrir_caixa(ctx):
 
     # Atualiza o tempo da última tentativa do jogador
     last_attempt_time[user.id] = time.time()
+
+# Comando para abrir a caixa sem cooldown (somente para o criador)
+@bot.command()
+async def abrir_admin(ctx):
+    if ctx.author.id == 470628393272999948:  # Verifica se é o criador
+        await ctx.send(f"{ctx.author.mention}, você usou o comando de forma segura, sem cooldown.")
+        # Sorteia um prêmio para o criador com as mesmas funções do `!abrir_caixa`
+        prize = escolher_premio()
+        mensagem = random.choice(mensagens_com_sorte).format(prize=prize["name"])
+        embed = discord.Embed(
+            title="🎁 Você abriu a Caixa de Presentes!",
+            description=f"{ctx.author.mention}, {mensagem} Você ganhou: **{prize['name']}**!",
+            color=discord.Color.gold()
+        )
+        embed.set_image(url=prize['image'])
+        await ctx.send(embed=embed)
+    else:
+        # Caso outro usuário tente usar o comando
+        await ctx.send(f"{ctx.author.mention}, apenas meu criador pode usar este comando! O apocalipse não perdoa sua ousadia.")
+        embed = discord.Embed(
+            title="⚡Mensagem Apocalíptica⚡",
+            description="Você ousou desafiar o criador! Apenas {creator} pode usar este poder.",
+            color=discord.Color.red()
+        )
+        await ctx.send(embed=embed)
 
 # Função para selecionar um prêmio com base nas chances ajustadas
 def escolher_premio():
