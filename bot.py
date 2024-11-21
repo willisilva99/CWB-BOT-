@@ -29,11 +29,11 @@ reacoes = ["🔥", "<:emoji_1:1262824010723365030>", "<:emoji_2:1261377496893489
 
 # Lista de prêmios com links diretos das imagens
 prizes = [
-    {"name": "AK47", "image": "https://media.discordapp.net/attachments/1291144028590706799/1309221997603196989/ak47.png", "chance": 2},
-    {"name": "VIP", "image": "https://media.discordapp.net/attachments/1291144028590706799/1309224289367228446/vip.png", "chance": 0.001},
-    {"name": "GIROCÓPTERO", "image": "https://media.discordapp.net/attachments/1291144028590706799/1309222056348618912/giroptero.png", "chance": 2},
-    {"name": "MOTO", "image": "https://media.discordapp.net/attachments/1291144028590706799/1309222023444037714/moto.png", "chance": 2},
-    {"name": "SEM SORTE", "image": "https://media.discordapp.net/attachments/1291144028590706799/1309221462866923520/sem_sorte.png", "chance": 95},
+    {"name": "AK47", "image": "https://i.postimg.cc/KYWdMknH/Ak47.webp", "chance": 2},
+    {"name": "VIP", "image": "https://i.postimg.cc/P537gpF5/pngtree-vip-3d-golden-word-element-png-image-240239.png", "chance": 0.001},
+    {"name": "GIROCÓPTERO", "image": "https://i.postimg.cc/fR84MgkZ/Gyrocopter-Placeable.webp", "chance": 2},
+    {"name": "MOTO", "image": "https://i.postimg.cc/9f060tq9/Motorcycle-Placeable.webp", "chance": 2},
+    {"name": "SEM SORTE", "image": "https://i.postimg.cc/Y0KZd5DN/DALL-E-2024-11-21-15-18-18-The-same-post-apocalyptic-supply-crate-marked-with-CWB-now-open-reve.webp", "chance": 95},
 ]
 
 # Mensagens de falha (Sem sorte)
