@@ -27,13 +27,13 @@ player_embers = {}
 # Emojis de reação para adicionar
 reacoes = ["🔥", "<:emoji_1:1262824010723365030>", "<:emoji_2:1261377496893489242>", "<:emoji_3:1261374830088032378>", "<:emoji_4:1260945241918279751>"]
 
-# Lista de prêmios com chance de VIP ajustada para 0.001%
+# Lista de prêmios com links diretos das imagens
 prizes = [
-    {"name": "AK47", "image": "https://discordapp.com/channels/1222717244170174585/1309220640556978196/1309221997603196989", "chance": 2},  # Chance baixa
-    {"name": "VIP", "image": "https://discordapp.com/channels/1222717244170174585/1309220640556978196/1309224289367228446/vip.png", "chance": 0.001},  # Chance 0.001%
-    {"name": "GIROCÓPTERO", "image": "https://discordapp.com/channels/1222717244170174585/1309220640556978196/1309222056348618912", "chance": 2},  # Chance baixa
-    {"name": "MOTO", "image": "https://discordapp.com/channels/1222717244170174585/1309220640556978196/1309222023444037714", "chance": 2},  # Chance baixa
-    {"name": "SEM SORTE", "image": "https://discordapp.com/channels/1222717244170174585/1309220640556978196/1309221462866923520", "chance": 95},  # Chance alta para falha
+    {"name": "AK47", "image": "https://media.discordapp.net/attachments/1291144028590706799/1301141997603196989/ak47.png", "chance": 2},  # Exemplo de link direto
+    {"name": "VIP", "image": "https://media.discordapp.net/attachments/1291144028590706799/1309224289367228446/vip.png", "chance": 0.001},  # Exemplo de link direto
+    {"name": "GIROCÓPTERO", "image": "https://media.discordapp.net/attachments/1291144028590706799/1309222056348618912/giroptero.png", "chance": 2},
+    {"name": "MOTO", "image": "https://media.discordapp.net/attachments/1291144028590706799/1309222023444037714/moto.png", "chance": 2},
+    {"name": "SEM SORTE", "image": "https://media.discordapp.net/attachments/1291144028590706799/1309221462866923520/sem_sorte.png", "chance": 95},  # Chance alta para falha
 ]
 
 # Mensagens de falha (Sem sorte)
@@ -124,7 +124,7 @@ async def abrir_caixa(ctx):
         description=f"{user.mention}, {mensagem} Você ganhou: **{prize['name']}**!" if prize["name"] != "SEM SORTE" else f"{user.mention}, {mensagem}",
         color=discord.Color.gold()
     )
-    embed.set_image(url=prize['image'])
+    embed.set_image(url=prize['image'])  # A imagem agora usa um link direto válido
 
     # Envia a mensagem com o embed no canal
     msg = await ctx.send(embed=embed)
@@ -135,31 +135,6 @@ async def abrir_caixa(ctx):
 
     # Atualiza o tempo da última tentativa do jogador
     last_attempt_time[user.id] = time.time()
-
-# Comando para abrir a caixa sem cooldown (somente para o criador)
-@bot.command()
-async def abrir_admin(ctx):
-    if ctx.author.id == 470628393272999948:  # Verifica se é o criador
-        await ctx.send(f"{ctx.author.mention}, você usou o comando de forma segura, sem cooldown.")
-        # Sorteia um prêmio para o criador com as mesmas funções do `!abrir_caixa`
-        prize = escolher_premio()
-        mensagem = random.choice(mensagens_com_sorte).format(prize=prize["name"])
-        embed = discord.Embed(
-            title="🎁 Você abriu a Caixa de Presentes!",
-            description=f"{ctx.author.mention}, {mensagem} Você ganhou: **{prize['name']}**!",
-            color=discord.Color.gold()
-        )
-        embed.set_image(url=prize['image'])
-        await ctx.send(embed=embed)
-    else:
-        # Caso outro usuário tente usar o comando
-        await ctx.send(f"{ctx.author.mention}, apenas meu criador pode usar este comando! O apocalipse não perdoa sua ousadia.")
-        embed = discord.Embed(
-            title="⚡Mensagem Apocalíptica⚡",
-            description="Você ousou desafiar o criador! Apenas {creator} pode usar este poder.",
-            color=discord.Color.red()
-        )
-        await ctx.send(embed=embed)
 
 # Função para selecionar um prêmio com base nas chances ajustadas
 def escolher_premio():
@@ -188,31 +163,6 @@ async def limpar_chat_automatica():
             color=discord.Color.red()
         )
         await channel.send(embed=embed)
-
-# Comando de emergência para limpar o chat (somente para administradores)
-@bot.command()
-async def limpar_chat(ctx):
-    # IDs dos administradores que podem usar o comando manualmente
-    allowed_admins = [470628393272999948, 434531832097144852]
-    
-    if ctx.author.id in allowed_admins:
-        # Limpeza do chat e mensagem apocalíptica
-        await ctx.channel.purge(limit=100)  # Limpa até 100 mensagens do canal
-        embed = discord.Embed(
-            title="⚡Limpeza de Chat⚡",
-            description="O apocalipse chegou e o chat foi limpo. Preparando o próximo ciclo de destruição...",
-            color=discord.Color.red()
-        )
-        await ctx.send(embed=embed)
-    else:
-        # Caso outra pessoa tente usar o comando
-        await ctx.send(f"{ctx.author.mention}, você não tem permissão para usar esse comando! Apenas administradores podem limpar o chat.")
-        embed = discord.Embed(
-            title="⚡Mensagem Apocalíptica⚡",
-            description="Você ousou tentar! A terra treme ao seu erro. Apenas os escolhidos podem invocar o poder do apocalipse.",
-            color=discord.Color.red()
-        )
-        await ctx.send(embed=embed)
 
 # Rodando o bot com o token de ambiente
 TOKEN = os.getenv('TOKEN')
