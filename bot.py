@@ -91,6 +91,16 @@ async def ajuda(ctx):
     
     await ctx.send(embed=embed)
 
+# Função para selecionar um prêmio com base nas chances ajustadas
+def escolher_premio():
+    total = sum(item['chance'] for item in prizes)
+    rand = random.uniform(0, total)
+    current = 0
+    for item in prizes:
+        current += item['chance']
+        if rand <= current:
+            return item
+
 # Comando para abrir a caixa com cooldown
 @bot.command()
 async def abrir_caixa(ctx):
@@ -121,7 +131,7 @@ async def abrir_caixa(ctx):
         mensagem = random.choice(mensagens_com_sorte).format(prize=prize["name"])
         player_prizes[user.id] = player_prizes.get(user.id, []) + [prize["name"]]  # Armazena o prêmio
 
-        # Envia uma mensagem apocaliptica mencionando o apelido do jogador para prêmios valiosos
+        # Envia uma mensagem apocalíptica mencionando o apelido do jogador para prêmios valiosos
         mensagem_apocaliptica = random.choice(mensagens_apocalipticas).format(user=user.display_name)
         await ctx.send(mensagem_apocaliptica)
 
@@ -171,19 +181,36 @@ async def abrir_admin(ctx):
         )
         await ctx.send(embed=embed)
 
-# Função para selecionar um prêmio com base nas chances ajustadas
-def escolher_premio():
-    total = sum(item['chance'] for item in prizes)
-    rand = random.uniform(0, total)
-    current = 0
-    for item in prizes:
-        current += item['chance']
-        if rand <= current:
-            return item
-
 # Função para calcular o tempo restante para o próximo sorteio
 def tempo_restante(last_time):
     return max(0, 10800 - (time.time() - last_time))  # 3 horas = 10800 segundos
+
+# Ranking de Prêmios - Top 10
+@tasks.loop(hours=6)
+async def rank_premios():
+    channel = bot.get_channel(canal_rank)
+    rank = sorted(player_prizes.items(), key=lambda x: sum(1 for prize in x[1] if prize != "SEM SORTE"), reverse=True)
+    mensagem = "🏆 **Ranking dos Melhores Prêmios** 🏆\n\n"
+    
+    for i, (user_id, prizes) in enumerate(rank[:10], start=1):
+        user = await bot.fetch_user(user_id)
+        itens_raros = [p for p in prizes if p != "SEM SORTE"]
+        mensagem += f"{i}. **{user.display_name}** - {len(itens_raros)} prêmios raros: {', '.join(itens_raros)}\n"
+    
+    await channel.send(mensagem)
+
+# Ranking de Caixas Abertas - Top 5
+@tasks.loop(hours=6, minutes=1)
+async def rank_aberturas_caixa():
+    channel = bot.get_channel(canal_rank)
+    rank = sorted(player_box_opens.items(), key=lambda x: x[1], reverse=True)
+    mensagem = "📦 **Ranking de Abertura de Caixas** 📦\n\n"
+    
+    for i, (user_id, opens) in enumerate(rank[:5], start=1):
+        user = await bot.fetch_user(user_id)
+        mensagem += f"{i}. **{user.display_name}** - {opens} caixas abertas\n"
+    
+    await channel.send(mensagem)
 
 # Limpeza automática diária do chat (à meia-noite)
 @tasks.loop(minutes=1)
