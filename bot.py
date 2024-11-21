@@ -120,11 +120,23 @@ async def abrir_caixa(ctx):
     if prize["name"] != "SEM SORTE":
         await msg.add_reaction(random.choice(reacoes))
 
-    # Limpeza do chat (opcional)
-    await ctx.channel.purge(limit=10)  # Apaga as últimas 10 mensagens, incluindo o comando
+    # Limpeza automática do chat após o comando
+    await ctx.channel.purge(limit=10)  # Limpa as últimas 10 mensagens
 
     # Atualiza o tempo da última tentativa do jogador
     last_attempt_time[user.id] = time.time()
+
+# Comando de emergência para limpar o chat (somente para administradores)
+@bot.command()
+async def limpar_chat(ctx):
+    # IDs dos administradores que podem usar o comando manualmente
+    allowed_admins = [470628393272999948, 434531832097144852]
+    
+    if ctx.author.id in allowed_admins:
+        await ctx.channel.purge(limit=100)  # Limpa até 100 mensagens do canal
+        await ctx.send(f"{ctx.author.mention} o chat foi limpo com sucesso!")
+    else:
+        await ctx.send(f"{ctx.author.mention}, você não tem permissão para usar esse comando! Apenas administradores podem limpar o chat.")
 
 # Função para selecionar um prêmio com base nas chances ajustadas
 def escolher_premio():
