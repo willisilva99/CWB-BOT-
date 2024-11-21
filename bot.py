@@ -121,7 +121,7 @@ async def abrir_caixa(ctx):
         mensagem = random.choice(mensagens_com_sorte).format(prize=prize["name"])
         player_prizes[user.id] = player_prizes.get(user.id, []) + [prize["name"]]  # Armazena o prêmio
 
-        # Envia uma mensagem apocalíptica mencionando o apelido do jogador para prêmios valiosos
+        # Envia uma mensagem apocaliptica mencionando o apelido do jogador para prêmios valiosos
         mensagem_apocaliptica = random.choice(mensagens_apocalipticas).format(user=user.display_name)
         await ctx.send(mensagem_apocaliptica)
 
