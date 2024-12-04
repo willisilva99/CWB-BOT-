@@ -159,9 +159,22 @@ async def abrir_caixa(ctx):
 @bot.command()
 async def abrir_admin(ctx):
     # Verifica se o autor do comando é o criador do bot (usuário com ID específico)
-    criador_id = 1257446580060028929  # Substitua pelo ID real do criador
+    criador_id = 470628393272999948  # Substituído pelo seu ID correto
     if ctx.author.id != criador_id:
-        await ctx.send("Somente o criador do bot pode usar este comando.")
+        # Embed de resposta caso o autor não seja o criador
+        embed = discord.Embed(
+            title="Acesso Negado",
+            description="Somente o criador do bot pode usar este comando. Se você precisar de algo, entre em contato.",
+            color=discord.Color.red()
+        )
+        embed.set_footer(text="Caso tenha dúvidas, entre em contato com o criador do bot.")
+        
+        # Botão de contato
+        button = Button(label="Entrar em Contato", style=discord.ButtonStyle.link, url="https://discord.com/users/470628393272999948")  # URL do criador para contato
+        view = View()
+        view.add_item(button)
+        
+        await ctx.send(embed=embed, view=view)
         return
 
     # Sorteia o prêmio como no comando normal
