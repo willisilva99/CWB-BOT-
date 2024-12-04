@@ -174,3 +174,4 @@ async def limpar_rank():
 # Rodando o bot com o token de ambiente
 TOKEN = os.getenv('TOKEN')
 bot.run(TOKEN)
+
