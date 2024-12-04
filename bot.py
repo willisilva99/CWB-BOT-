@@ -155,23 +155,26 @@ async def abrir_caixa(ctx):
     # Atualiza o tempo da última tentativa do jogador
     last_attempt_time[user.id] = time.time()
 
-# Comando para limpar e zerar os rankings a cada 7 horas
-@tasks.loop(hours=7)
-async def limpar_rank():
-    # Zerando os rankings de prêmios e caixas abertas
-    player_prizes.clear()
-    player_box_opens.clear()
+# Comando de administrador para abrir a caixa sem cooldown
+@bot.command()
+async def abrir_admin(ctx):
+    # Verifica se o autor do comando é o criador do bot (usuário com ID específico)
+    criador_id = 1257446580060028929  # Substitua pelo ID real do criador
+    if ctx.author.id != criador_id:
+        await ctx.send("Somente o criador do bot pode usar este comando.")
+        return
 
-    # Envia uma mensagem para o canal de rank
-    channel = bot.get_channel(canal_rank)
+    # Sorteia o prêmio como no comando normal
+    prize = escolher_premio()
+
     embed = discord.Embed(
-        title="⚡ Zeração de Ranking ⚡",
-        description="O ranking foi zerado. Todos os prêmios e caixas abertas foram reiniciados.",
-        color=discord.Color.red()
+        title="🎁 Você abriu uma Caixa Especial!",
+        description=f"**{ctx.author.mention}** ganhou: **{prize['name']}**!",
+        color=discord.Color.gold()
     )
-    await channel.send(embed=embed)
+    embed.set_image(url=prize['image'])
+    await ctx.send(embed=embed)
 
 # Rodando o bot com o token de ambiente
 TOKEN = os.getenv('TOKEN')
 bot.run(TOKEN)
-
