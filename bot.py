@@ -81,7 +81,7 @@ async def ajuda(ctx):
     **Comandos disponíveis:**
 
     `!abrir_caixa` - Abra uma caixa para ganhar prêmios. Apenas pode ser usado no canal correto.
-    `!abrir_admin` - Apenas o criador pode usar este comando, sem cooldown.
+    `!abrir_admin` - Apenas o criador ou o usuário autorizado pode usar este comando, sem cooldown.
     `!limpar_chat` - Limpa o chat, só pode ser usado por administradores. (Comando de emergência)
     `!ajuda` - Exibe esta mensagem de ajuda.
     `!rank_premios` - Exibe o ranking dos melhores prêmios.
@@ -158,18 +158,20 @@ async def abrir_caixa(ctx):
 # Comando de administrador para abrir a caixa sem cooldown
 @bot.command()
 async def abrir_admin(ctx):
-    # Verifica se o autor do comando é o criador do bot (usuário com ID específico)
-    criador_id = 470628393272999948  # Substituído pelo seu ID correto
-    if ctx.author.id != criador_id:
-        # Embed de resposta caso o autor não seja o criador
+    # Verifica se o autor do comando é o criador ou o usuário autorizado
+    criador_id = 470628393272999948  # Seu ID correto
+    usuario_autorizado_id = 434531832097144852  # ID autorizado a usar o comando
+
+    if ctx.author.id != criador_id and ctx.author.id != usuario_autorizado_id:
+        # Embed de resposta caso o autor não seja o criador nem o autorizado
         embed = discord.Embed(
             title="Acesso Negado",
-            description="Somente o criador do bot pode usar este comando. Se você precisar de algo, entre em contato.",
+            description="Somente o criador ou o usuário autorizado podem usar este comando. Caso precise de algo, entre em contato.",
             color=discord.Color.red()
         )
         embed.set_footer(text="Caso tenha dúvidas, entre em contato com o criador do bot.")
         
-        # Botão de contato
+        # Botão de contato com o link do criador
         button = Button(label="Entrar em Contato", style=discord.ButtonStyle.link, url="https://discord.com/users/470628393272999948")  # URL do criador para contato
         view = View()
         view.add_item(button)
