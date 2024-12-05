@@ -155,6 +155,43 @@ async def abrir_caixa(ctx):
     # Atualiza o tempo da última tentativa do jogador
     last_attempt_time[user.id] = time.time()
 
+# Comando para exibir o ranking de prêmios
+@bot.command()
+async def rank_premios(ctx):
+    # Verifica se o comando foi executado no canal correto
+    if ctx.channel.id != canal_rank:
+        await ctx.send(f"{ctx.author.mention}, você só pode usar este comando no canal de rank: <#{canal_rank}>")
+        return
+
+    # Ordenando os jogadores com base nos prêmios ganhos
+    rank = sorted(player_prizes.items(), key=lambda x: len(x[1]), reverse=True)
+    mensagem = "🏆 **Ranking dos Melhores Prêmios** 🏆\n\n"
+
+    for i, (user_id, prizes) in enumerate(rank[:10], start=1):
+        user = await bot.fetch_user(user_id)
+        itens_raros = [p for p in prizes if p != "SEM SORTE"]
+        mensagem += f"{i}. **{user.display_name}** - {len(itens_raros)} prêmios raros: {', '.join(itens_raros)}\n"
+    
+    await ctx.send(mensagem)
+
+# Comando para exibir o ranking de caixas abertas
+@bot.command()
+async def rank_caixas_abertas(ctx):
+    # Verifica se o comando foi executado no canal correto
+    if ctx.channel.id != canal_rank:
+        await ctx.send(f"{ctx.author.mention}, você só pode usar este comando no canal de rank: <#{canal_rank}>")
+        return
+
+    # Ordenando os jogadores com base no número de caixas abertas
+    rank = sorted(player_box_opens.items(), key=lambda x: x[1], reverse=True)
+    mensagem = "📦 **Ranking de Abertura de Caixas** 📦\n\n"
+
+    for i, (user_id, opens) in enumerate(rank[:5], start=1):
+        user = await bot.fetch_user(user_id)
+        mensagem += f"{i}. **{user.display_name}** - {opens} caixas abertas\n"
+    
+    await ctx.send(mensagem)
+
 # Comando de administrador para abrir a caixa sem cooldown
 @bot.command()
 async def abrir_admin(ctx):
