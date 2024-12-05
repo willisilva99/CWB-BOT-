@@ -14,11 +14,10 @@ intents.message_content = True
 bot = commands.Bot(command_prefix="!", intents=intents)
 
 # IDs dos canais
-canal_abrir_caixa = 1309181452595757077  # Canal onde se pode usar !abrir_caixa
-canal_rank = 1309181411751886869         # Canal para comandos de rank
-canal_premio = 1222717244170174588       # Canal de aviso de prêmios em tempo real
+canal_abrir_caixa = 1309181452595757077
+canal_rank = 1309181411751886869
+canal_premio = 1222717244170174588
 
-# Dicionários de dados
 last_attempt_time = {}
 player_prizes = {}
 player_box_opens = {}
@@ -55,7 +54,7 @@ mensagens_com_sorte = [
 ]
 
 def tempo_restante(last_time):
-    return max(0, 10800 - (time.time() - last_time))
+    return max(0, 10800 - (time.time() - last_time))  # 3 horas = 10800s
 
 def escolher_premio():
     total = sum(item['chance'] for item in prizes)
@@ -71,10 +70,20 @@ def contar_raros(user_id):
         return 0
     return sum(1 for p in player_prizes[user_id] if p != "SEM SORTE")
 
-@bot.event
-async def on_ready():
-    limpar_rank.start()
-    print(f"Bot conectado como {bot.user}")
+# Lista de status para o bot alternar
+status_list = [
+    "Jogando 7 Days to Die",
+    "Falando com Willi",
+    "Conversando com Willi",
+    "Dormindo"
+]
+status_index = 0
+
+@tasks.loop(minutes=5)
+async def mudar_status():
+    nonlocal status_index
+    await bot.change_presence(activity=discord.Game(name=status_list[status_index]))
+    status_index = (status_index + 1) % len(status_list)
 
 @tasks.loop(hours=7)
 async def limpar_rank():
@@ -88,13 +97,19 @@ async def limpar_rank():
     )
     await channel.send(embed=embed)
 
+@bot.event
+async def on_ready():
+    limpar_rank.start()
+    mudar_status.start()
+    print(f"Bot conectado como {bot.user}")
+
 @bot.command()
 async def ajuda(ctx):
     ajuda_texto = """
     **Comandos disponíveis:**
 
     `!abrir_caixa` - Abra uma caixa para ganhar prêmios (apenas no canal correto).
-    `!abrir_admin` - Apenas o criador ou um usuário autorizado pode usar este comando, sem cooldown.
+    `!abrir_admin` - Apenas o criador ou o usuário autorizado podem usar sem cooldown.
     `!limpar_chat` - Limpa as últimas 100 mensagens (apenas admin).
     `!ajuda` - Exibe esta mensagem de ajuda.
     `!rank_premios` - Exibe o ranking dos melhores prêmios.
@@ -175,7 +190,7 @@ async def abrir_caixa(ctx):
         await msg.add_reaction(random.choice(reacoes))
         raros = contar_raros(user.id)
         caixas_abertas = player_box_opens[user.id]
-        parabens_msg = (f"🎉 **Parabéns {user.mention}!** Você ganhou: **{prize['name']}**!"
+        parabens_msg = (f"🎉 **Parabéns {ctx.author.mention}!** Você ganhou: **{prize['name']}**!"
                         f"\nCaixas Abertas: **{caixas_abertas}** | Prêmios Raros: **{raros}**")
         embed_parabens = discord.Embed(
             title="🥳 Ganhador do Sorteio!",
@@ -208,9 +223,12 @@ async def rank_premios(ctx):
     for i, (user_id, prizes) in enumerate(rank[:10], start=1):
         user = await bot.fetch_user(user_id)
         itens_raros = [p for p in prizes if p != "SEM SORTE"]
+        valor = f"**Prêmios Raros:** {len(itens_raros)}"
+        if itens_raros:
+            valor += f"\n{', '.join(itens_raros)}"
         embed.add_field(
             name=f"{i}. {user.display_name}",
-            value=f"**Prêmios Raros:** {len(itens_raros)} - {', '.join(itens_raros) if itens_raros else 'Nenhum'}",
+            value=valor,
             inline=False
         )
     await ctx.send(embed=embed)
@@ -287,6 +305,21 @@ async def abrir_admin(ctx):
         )
         embed_parabens.set_image(url=prize['image'])
         await bot.get_channel(canal_premio).send(embed=embed_parabens)
+
+# Lista de status rotativos do bot
+status_list = [
+    "Jogando 7 Days to Die",
+    "Falando com Willi",
+    "Conversando com Willi",
+    "Dormindo"
+]
+status_index = 0
+
+@tasks.loop(minutes=5)
+async def mudar_status():
+    global status_index
+    await bot.change_presence(activity=discord.Game(name=status_list[status_index]))
+    status_index = (status_index + 1) % len(status_list)
 
 TOKEN = os.getenv('TOKEN')
 bot.run(TOKEN)
