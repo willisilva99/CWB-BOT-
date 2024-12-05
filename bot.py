@@ -18,7 +18,7 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 # IDs dos canais
 canal_abrir_caixa = 1309181452595757077  # Canal de comando para abrir caixas
 canal_rank = 1309181411751886869  # Canal de Rank Automático
-canal_premio = 1222717244170174588  # Canal de aviso de prêmios
+canal_premio = 1222717244170174588  # Canal de aviso de prêmios em tempo real
 
 # Dicionário para armazenar o último tempo de sorteio de cada jogador e pontuação de embers
 last_attempt_time = {}
@@ -189,6 +189,22 @@ async def abrir_admin(ctx):
     )
     embed.set_image(url=prize['image'])
     await ctx.send(embed=embed)
+
+# Comando para limpar e zerar os rankings a cada 7 horas
+@tasks.loop(hours=7)
+async def limpar_rank():
+    # Zerando os rankings de prêmios e caixas abertas
+    player_prizes.clear()
+    player_box_opens.clear()
+
+    # Envia uma mensagem para o canal de rank
+    channel = bot.get_channel(canal_rank)
+    embed = discord.Embed(
+        title="⚡ Zeração de Ranking ⚡",
+        description="O ranking foi zerado. Todos os prêmios e caixas abertas foram reiniciados.",
+        color=discord.Color.red()
+    )
+    await channel.send(embed=embed)
 
 # Rodando o bot com o token de ambiente
 TOKEN = os.getenv('TOKEN')
