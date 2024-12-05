@@ -74,31 +74,6 @@ def escolher_premio():
         if rand <= current:
             return item
 
-# Comando de ajuda com imagem
-@bot.command()
-async def ajuda(ctx):
-    ajuda_texto = """
-    **Comandos disponíveis:**
-
-    `!abrir_caixa` - Abra uma caixa para ganhar prêmios. Apenas pode ser usado no canal correto.
-    `!abrir_admin` - Apenas o criador ou o usuário autorizado pode usar este comando, sem cooldown.
-    `!limpar_chat` - Limpa o chat, só pode ser usado por administradores. (Comando de emergência)
-    `!ajuda` - Exibe esta mensagem de ajuda.
-    `!rank_premios` - Exibe o ranking dos melhores prêmios.
-    `!rank_caixas_abertas` - Exibe o ranking dos jogadores que mais abriram caixas.
-    
-    **Nota:** O comando `!abrir_caixa` só pode ser usado no canal correto. Consulte o administrador para mais informações.
-    """
-    
-    embed = discord.Embed(
-        title="Comandos Disponíveis",
-        description=ajuda_texto,
-        color=discord.Color.blue()
-    )
-    embed.set_image(url="https://i.postimg.cc/rmt7CVjF/DALL-E-2024-11-21-15-22-03-A-rugged-survivor-in-a-post-apocalyptic-setting-wearing-worn-out-cloth.webp")
-    
-    await ctx.send(embed=embed)
-
 # Comando para abrir a caixa com cooldown
 @bot.command()
 async def abrir_caixa(ctx):
@@ -150,7 +125,13 @@ async def abrir_caixa(ctx):
     # Envia a mensagem de parabéns no canal de premiação
     if prize["name"] != "SEM SORTE":
         parabens_msg = f"🎉 **Parabéns {user.mention}!** Você ganhou: **{prize['name']}**! Prepare-se para a próxima aventura!"
-        await bot.get_channel(canal_premio).send(parabens_msg)
+        embed_parabens = discord.Embed(
+            title="🥳 Ganhador do Sorteio!",
+            description=parabens_msg,
+            color=discord.Color.green()
+        )
+        embed_parabens.set_image(url=prize['image'])
+        await bot.get_channel(canal_premio).send(embed=embed_parabens)
 
     # Atualiza o tempo da última tentativa do jogador
     last_attempt_time[user.id] = time.time()
