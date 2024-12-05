@@ -70,18 +70,18 @@ def contar_raros(user_id):
         return 0
     return sum(1 for p in player_prizes[user_id] if p != "SEM SORTE")
 
-# Lista de status para o bot alternar
+# Lista de status rotativos do bot
 status_list = [
     "Jogando 7 Days to Die",
     "Falando com Willi",
     "Conversando com Willi",
     "Dormindo"
 ]
-status_index = 0
+status_index = 0  # Definição no escopo global
 
 @tasks.loop(minutes=5)
 async def mudar_status():
-    nonlocal status_index
+    global status_index  # Use global ao invés de nonlocal
     await bot.change_presence(activity=discord.Game(name=status_list[status_index]))
     status_index = (status_index + 1) % len(status_list)
 
