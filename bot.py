@@ -95,7 +95,7 @@ async def mudar_status():
     await bot.change_presence(activity=discord.Game(name=status_list[status_index]))
     status_index = (status_index + 1) % len(status_list)
 
-@tasks.loop(hours=7)
+@tasks.loop(hours=10)
 async def limpar_rank():
     player_prizes.clear()
     player_box_opens.clear()
