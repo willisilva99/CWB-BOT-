@@ -16,7 +16,7 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 # IDs dos canais
 canal_abrir_caixa = 1309181452595757077
 canal_rank = 1309181411751886869
-canal_premio = 1222717244170174588
+canal_premio = 1320500386234105897
 
 last_attempt_time = {}
 player_prizes = {}
@@ -33,6 +33,8 @@ prizes = [
     {"name": "GIROCÓPTERO", "image": "https://i.postimg.cc/fR84MgkZ/Gyrocopter-Placeable.webp", "chance": 0.5, "description": "Girocóptero para viagens aéreas seguras."},
     {"name": "MOTO", "image": "https://i.postimg.cc/9f060tq9/Motorcycle-Placeable.webp", "chance": 1, "description": "Uma moto resistente para terrenos hostis."},
     {"name": "SEM SORTE", "image": "https://i.postimg.cc/Y0KZd5DN/DALL-E-2024-11-21-15-18-18-The-same-post-apocalyptic-supply-crate-marked-with-CWB-now-open-reve.webp", "chance": 95, "description": "A sorte não está do seu lado hoje."},
+    {"name": "1 Ponto de Skill", "image": "https://imgur.com/n4dqi3d.png", "chance": 0.5, "description": "Eraser T5, arma potente para apagar ameaças."},
+    {"name": "10 Pontos de Skill", "image": "https://imgur.com/n4dqi3d.png", "chance": 0.1, "description": "BullDog T5, espingarda implacável."},
     {"name": "CWB Coin", "image": "https://imgur.com/n4dqi3d.png", "chance": 0.5, "description": "CWB Coin, troque por vantagens raras."},
     {"name": "Pack 5k Munição 9mm Urânio", "image": "https://imgur.com/n4dqi3d.png", "chance": 0.5, "description": "5k munição 9mm urânio, poder de fogo intenso."},
     {"name": "Pack 5k Munição 762mm Urânio", "image": "https://imgur.com/n4dqi3d.png", "chance": 0.5, "description": "5k munição 7.62mm urânio, destruição garantida."},
