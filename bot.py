@@ -35,7 +35,7 @@ prizes = [
     {"name": "SEM SORTE", "image": "https://i.postimg.cc/Y0KZd5DN/DALL-E-2024-11-21-15-18-18-The-same-post-apocalyptic-supply-crate-marked-with-CWB-now-open-reve.webp", "chance": 95, "description": "A sorte não está do seu lado hoje."},
     {"name": "1 Ponto de Skill", "image": "https://imgur.com/n4dqi3d.png", "chance": 0.5, "description": "Eraser T5, arma potente para apagar ameaças."},
     {"name": "10 Pontos de Skill", "image": "https://imgur.com/n4dqi3d.png", "chance": 0.1, "description": "BullDog T5, espingarda implacável."},
-    {"name": "CWB Coin", "image": "https://imgur.com/n4dqi3d.png", "chance": 0.5, "description": "CWB Coin, troque por vantagens raras."},
+    {"name": "2 CWB Coin", "image": "https://imgur.com/n4dqi3d.png", "chance": 0.5, "description": "CWB Coin, troque por vantagens raras."},
     {"name": "Pack 5k Munição 9mm Urânio", "image": "https://imgur.com/n4dqi3d.png", "chance": 0.5, "description": "5k munição 9mm urânio, poder de fogo intenso."},
     {"name": "Pack 5k Munição 762mm Urânio", "image": "https://imgur.com/n4dqi3d.png", "chance": 0.5, "description": "5k munição 7.62mm urânio, destruição garantida."},
     {"name": "Pack 5k Munição Shot Urânio", "image": "https://imgur.com/n4dqi3d.png", "chance": 0.5, "description": "5k munição Shot urânio, impacto devastador."}
