@@ -36,9 +36,9 @@ prizes = [
     {"name": "1 Ponto de Skill", "image": "https://imgur.com/n4dqi3d.png", "chance": 0.4, "description": "Eraser T5, arma potente para apagar ameaças."},
     {"name": "10 Pontos de Skill", "image": "https://imgur.com/n4dqi3d.png", "chance": 0.1, "description": "BullDog T5, espingarda implacável."},
     {"name": "2 CWB Coin", "image": "https://imgur.com/n4dqi3d.png", "chance": 0.5, "description": "CWB Coin, troque por vantagens raras."},
-    {"name": "Pack 5k Munição 9mm Urânio", "image": "https://imgur.com/n4dqi3d.png", "chance": 0.49, "description": "5k munição 9mm urânio, poder de fogo intenso."},
-    {"name": "Pack 5k Munição 762mm Urânio", "image": "https://imgur.com/n4dqi3d.png", "chance": 0.5, "description": "5k munição 7.62mm urânio, destruição garantida."},
-    {"name": "Pack 5k Munição Shot Urânio", "image": "https://imgur.com/n4dqi3d.png", "chance": 0.5, "description": "5k munição5 Shot urânio, impacto devastador."}
+    {"name": "Pack 5k Munição 9mm Urânio", "image": "https://i.postimg.cc/9R88X2Wy/ammo9mm-Bullet-DU.png", "chance": 0.49, "description": "5k munição 9mm urânio, poder de fogo intenso."},
+    {"name": "Pack 5k Munição 762mm Urânio", "image": "https://i.postimg.cc/bSZ6s5JW/ammo762mm-Bullet-DU.png", "chance": 0.5, "description": "5k munição 7.62mm urânio, destruição garantida."},
+    {"name": "Pack 5k Munição Shot Urânio", "image": "https://i.postimg.cc/bdrVCZTg/ammo-Shotgun-Slug-DU.png", "chance": 0.5, "description": "5k munição5 Shot urânio, impacto devastador."}
 ]
 
 mensagens_sem_sorte = [
